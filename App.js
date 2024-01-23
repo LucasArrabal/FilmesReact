@@ -1,14 +1,39 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import react, {Component} from 'react';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import api from './src/services/api';
+import Filmes from './src/Filmes';
+
+ class App extends Component {
+  constructor(props){
+    super(props);
+    this.state= {
+      filmes: []
+    }
+  }
+
+
+  async componentDidMount(){
+    const response =  await api.get('r-api/?api=filmes');
+    this.setState({
+      filmes: response.data
+    });
+  }
+
+  render(){
+    return (
+      <View style={styles.container}>
+        <FlatList
+        data={this.state.filmes}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({item}) => <Filmes data={item}/> }
+        />
+      </View>
+    );
+  }
 }
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
