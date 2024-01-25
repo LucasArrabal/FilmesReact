@@ -1,5 +1,5 @@
 import react, {Component} from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
 
 import api from './src/services/api';
 import Filmes from './src/Filmes';
@@ -8,7 +8,8 @@ import Filmes from './src/Filmes';
   constructor(props){
     super(props);
     this.state= {
-      filmes: []
+      filmes: [],
+      loading: true
     }
   }
 
@@ -16,20 +17,32 @@ import Filmes from './src/Filmes';
   async componentDidMount(){
     const response =  await api.get('r-api/?api=filmes');
     this.setState({
-      filmes: response.data
+      filmes: response.data,
+      loading: false
     });
   }
 
   render(){
-    return (
-      <View style={styles.container}>
-        <FlatList
-        data={this.state.filmes}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({item}) => <Filmes data={item}/> }
-        />
-      </View>
-    );
+    if(this.state.loading){
+      return(
+        <View style={{alignItems:'center', justifyContent:'center', flex: 1}}>
+          <ActivityIndicator color="#090FF" size={40}/>
+        </View>
+        
+      );
+    }
+    else{
+      return (
+        <View style={styles.container}>
+          <FlatList
+          data={this.state.filmes}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({item}) => <Filmes data={item}/> }
+          />
+        </View>
+      );
+    }
+
   }
 }
 
@@ -37,9 +50,7 @@ export default App;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  
+
   },
 });
